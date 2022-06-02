@@ -1,0 +1,76 @@
+{% extends '_partials/base.html' %}
+
+{% block title %}
+    Create an account
+{% endblock title %}
+
+{% load static %}
+
+
+
+{% block content %}
+
+
+    <div class="ui grid">
+        <div class="four wide column"></div>
+        <div class="eight wide column">
+            <div class="ui middle aligned center aligned grid">
+                <div class="column mt-5">
+                    <h2 class="ui teal image header">
+                        <img src={% static 'img/logo.png' %} class="image" alt="">
+                        <div class="content">Registration</div>
+                    </h2>
+
+                    {% include '_partials/messages.html' %}
+
+                    <form class="ui large form" method="post" action={% url 'register' %}>
+                        {% csrf_token %}
+
+                        <div class="ui stacked segment">
+                            <div class="field">
+                                <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input type="text" name="username" placeholder="Username" value="{{ data.username }}">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input type="text" name="email" placeholder="E-mail address" value="{{ data.email }}" required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui left icon input">
+                                    <i class="lock icon"></i>
+                                    <input type="password" name="password" placeholder="Password" required>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input
+                                        type="password"
+                                        name="password2"
+                                        placeholder="Repeat Password"
+                                        required/>
+                                </div>
+                            </div>
+
+                            <button class="ui fluid large teal submit button">Submit</button>
+                        </div>
+
+                    </form>
+
+                    <div class="ui message">Have an account? <a href={% url 'login' %}>Login</a></div>
+
+                <div class="four eid column"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock content %}
