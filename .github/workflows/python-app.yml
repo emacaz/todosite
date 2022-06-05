@@ -5,20 +5,21 @@ name: Python application
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "master" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
 
-
     runs-on: ubuntu-latest
-
 
     services:
       postgres:
-        image: postgres:10.8
+        image: postgres:14.0
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -29,45 +30,32 @@ jobs:
 
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
       with:
-        python-version: 3.9
+        python-version: "3.10"
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-
+    
     - name: Test with Unittest
-      env: 
+      env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DEBUG: ${{ secrets.DEBUG }}
+        EMAIL_FROM_USER: ${{ secrets.EMAIL_FROM_USER }}
+        EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        EMAIL_USE_TLS: ${{ secrets.EMAIL_USE_TLS }}
+        EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+
+        DB_ENGINE: ${{ secrets.DB_ENGINE }}
         DB_NAME: ${{ secrets.DB_NAME }}
         DB_USER: ${{ secrets.DB_USER }}
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_PORT: ${{ secrets.DB_PORT }}
-        DB_ENGINE: ${{secrets.DB_ENGINE}}
-          
       run: |
-        coverage run manage.py test && coverage report --fail-under=75 && coverage xml
-
-
-    - name: Report coverage to codecov
-      env: 
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DB_NAME: ${{ secrets.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
-        DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_HOST: ${{ secrets.DB_HOST }}
-        DB_PORT: ${{ secrets.DB_PORT }}
-        DB_ENGINE: ${{secrets.DB_ENGINE}}
-
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./coverage.xml
-        directory: ./coverage/reports/
-        fail_ci_if_error: true
+        python manage.py test
