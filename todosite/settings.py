@@ -3,6 +3,7 @@ from decouple import config
 import os
 import sys
 from pathlib import Path
+import django_on_heroku
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -128,6 +129,7 @@ EMAIL_PORT = 587
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'todosite/static')]
 
 # Default primary key field type
@@ -136,3 +138,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'todosite/static')]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'auth/login'
+
+# Configure Django App for Heroku.
+
+django_on_heroku.settings(locals())
