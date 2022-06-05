@@ -4,7 +4,6 @@ venv/
 # mac file
 .DS_STORE
 
-
 # Sensitive file
 .env
 
